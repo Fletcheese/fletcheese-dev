@@ -231,10 +231,18 @@ a {
 }
 
 .post-card {
+  display: block;
   background: var(--surface);
   border: 1px solid var(--slate);
   border-radius: 0.6rem;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+a.post-card:hover {
+  border-color: var(--green);
 }
 
 .post-card .thumb {

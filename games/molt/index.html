@@ -1,0 +1,445 @@
+<title>Molt</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jacquard+12&family=Silkscreen:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&display=swap">
+<style>
+  :root{
+    --bog:#0f1712; --bog-2:#17221b; --bog-3:#1e2c22;
+    --moss:#3a4e3a; --moss-lit:#54704f;
+    --cream:#e9dfc4; --amber:#d99a4e;
+    --lichen:#8fbf6a; --teal:#5fb0a8;
+    --ink:#e9f0e4; --ink-2:#a3b39a; --ink-3:#6d7d67;
+    --frame:#2c3a2c;
+  }
+  *{box-sizing:border-box}
+  body{
+    background:var(--bog); color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;
+    margin:0; padding-block:22px 40px; padding-left:16px; padding-right:16px;
+    display:flex; flex-direction:column; align-items:center;
+    min-height:100vh;
+    background-image:radial-gradient(120% 90% at 50% 0%, #1a271c 0%, var(--bog) 62%);
+  }
+  .wrap{width:100%; max-width:800px; display:flex; flex-direction:column; gap:16px}
+
+  header{display:flex; align-items:flex-end; justify-content:space-between; gap:14px; flex-wrap:wrap}
+  h1{
+    font-family:"Jacquard 12",serif; font-weight:400;
+    font-size:clamp(46px,11vw,72px); line-height:.78; margin:0;
+    color:var(--lichen); text-shadow:0 0 18px rgba(143,191,106,.28);
+    letter-spacing:.02em;
+  }
+  .tag{font-size:13px; color:var(--ink-3); font-style:italic; margin:6px 0 0; max-width:46ch; line-height:1.5}
+  .scoreboard{
+    font-family:"Silkscreen",monospace; font-size:11px; letter-spacing:.09em;
+    display:flex; gap:16px; align-items:baseline; color:var(--ink-2);
+    font-variant-numeric:tabular-nums;
+  }
+  .scoreboard b{color:var(--ink); font-weight:400}
+
+  .ribbon{display:flex; gap:5px; flex-wrap:wrap}
+  .ribbon button{
+    font-family:"Silkscreen",monospace; font-size:10px; letter-spacing:.06em;
+    background:var(--bog-2); color:var(--ink-3); border:1px solid var(--frame);
+    padding:5px 7px; cursor:pointer; min-width:32px;
+  }
+  .ribbon button:hover{color:var(--ink); border-color:var(--moss-lit)}
+  .ribbon button.done{color:var(--lichen); border-color:#3d4a33}
+  .ribbon button[aria-current="true"]{background:var(--teal); border-color:var(--teal); color:#0c1a17}
+
+  .stage{display:flex; gap:14px; align-items:stretch}
+  .boardbox{position:relative; flex:1 1 auto; min-width:0}
+  canvas{
+    display:block; width:100%; height:auto; image-rendering:pixelated;
+    border:1px solid var(--frame); background:#0a100c;
+  }
+  .glow{position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 0 60px rgba(8,12,9,.7)}
+
+  .readout{
+    flex:0 0 152px; border:1px solid var(--frame); background:var(--bog-2);
+    padding:10px; display:flex; flex-direction:column; gap:6px;
+  }
+  .readout h2{
+    font-family:"Silkscreen",monospace; font-size:9px; letter-spacing:.13em;
+    color:var(--ink-3); margin:0; font-weight:400;
+  }
+  .cairnlist{display:flex; flex-direction:column-reverse; gap:3px}
+  .slot{display:flex; align-items:center; gap:6px; padding:3px 5px; border:1px solid var(--frame); background:var(--bog-3)}
+  .slot canvas{width:18px; height:18px; border:0; background:none; flex:0 0 18px}
+  .slot .nm{font-family:"Silkscreen",monospace; font-size:9px; letter-spacing:.03em}
+  .empty{font-size:12px; font-style:italic; color:var(--ink-3)}
+  .rule{border-top:1px solid var(--frame); margin:2px 0}
+  .tally{
+    font-family:"Silkscreen",monospace; font-size:9px; letter-spacing:.08em;
+    color:var(--ink-3); display:flex; justify-content:space-between;
+    border-top:1px solid var(--frame); padding-top:6px; font-variant-numeric:tabular-nums;
+  }
+  .tally b{color:var(--ink-2); font-weight:400}
+
+  .teach{font-size:16px; font-style:italic; color:var(--ink-2); margin:0; max-width:64ch; min-height:3.4em; line-height:1.45}
+  .teach .lv{
+    font-style:normal; font-family:"Silkscreen",monospace; font-size:11px;
+    letter-spacing:.12em; color:var(--teal); display:block; margin-bottom:6px;
+  }
+  .flash{min-height:1.4em; font-family:"Silkscreen",monospace; font-size:10px; letter-spacing:.06em; color:var(--amber); margin:0}
+  .flash.good{color:var(--lichen)}
+
+  .controls{display:flex; gap:16px; align-items:center; flex-wrap:wrap}
+  .pad{display:grid; grid-template-columns:repeat(3,42px); grid-template-rows:repeat(2,42px); gap:4px}
+  .pad button,.btn{
+    font-family:"Silkscreen",monospace;
+    background:var(--bog-2); color:var(--ink-2); border:1px solid var(--frame);
+    cursor:pointer; touch-action:manipulation;
+  }
+  .pad button{font-size:13px; padding:0}
+  .pad button:active,.btn:active{background:var(--moss)}
+  .pad button:hover,.btn:hover{color:var(--ink); border-color:var(--moss-lit)}
+  .pad .u{grid-column:2; grid-row:1}
+  .pad .l{grid-column:1; grid-row:2}
+  .pad .d{grid-column:2; grid-row:2}
+  .pad .r{grid-column:3; grid-row:2}
+  .btnrow{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px}
+  .btn{padding:9px 12px; font-size:10px; letter-spacing:.08em}
+  .btn.arm[aria-pressed="true"]{background:var(--amber); border-color:var(--amber); color:#1f1408}
+  .keys{font-family:"Silkscreen",monospace; font-size:9px; color:var(--ink-3); letter-spacing:.06em; line-height:2; margin:0}
+  .keys kbd{color:var(--ink-2); background:var(--bog-2); border:1px solid var(--frame); padding:1px 4px}
+
+  .won{position:absolute; inset:0; display:none; place-content:center; text-align:center; background:rgba(10,16,12,.9); padding:18px}
+  .won.show{display:grid}
+  .won h3{font-family:"Jacquard 12",serif; font-weight:400; font-size:46px; margin:0 0 4px; color:var(--lichen)}
+  .won p{margin:0 0 14px; font-size:14px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+  .won .btn{font-size:11px; padding:10px 16px}
+
+  :focus-visible{outline:2px solid var(--lichen); outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+  @media (max-width:600px){
+    .stage{flex-direction:column}
+    .readout{flex:1 1 auto; width:100%}
+  }
+</style>
+
+<a href="../../games.html" style="position:fixed;top:8px;left:8px;z-index:50;font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.08em;color:#ccc;text-decoration:none;border:1px solid rgba(255,255,255,.18);padding:4px 8px;background:rgba(0,0,0,.55)">&larr; GAMES</a>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Molt</h1>
+      <p class="tag">Shed what you carry and it takes hold in the world — a Plank spans a chasm, a Spring hurls you over one. You always shed what's on top.</p>
+    </div>
+    <div class="scoreboard">
+      <span>MOVES <b id="moves">0</b></span>
+    </div>
+  </header>
+
+  <div class="ribbon" id="ribbon"></div>
+
+  <div class="stage">
+    <div class="boardbox">
+      <canvas id="board" width="320" height="240"></canvas>
+      <div class="glow"></div>
+      <div class="won" id="won">
+        <div>
+          <h3>Molted</h3>
+          <p id="wonSub"></p>
+          <button class="btn" id="nextBtn">NEXT</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="readout">
+      <h2>CARRYING</h2>
+      <div id="cairnlist" class="cairnlist"></div>
+      <div id="cairnEmpty" class="empty">Nothing left to shed.</div>
+      <div class="rule"></div>
+      <div class="tally"><span>HELD <b id="held">0</b></span><span>CAP <b id="cap">0</b></span></div>
+    </aside>
+  </div>
+
+  <p class="teach" id="teach"></p>
+  <p class="flash" id="flash"></p>
+
+  <div class="controls">
+    <div class="pad">
+      <button class="u" data-dir="U" aria-label="Walk up">&#9650;</button>
+      <button class="l" data-dir="L" aria-label="Walk left">&#9664;</button>
+      <button class="d" data-dir="D" aria-label="Walk down">&#9660;</button>
+      <button class="r" data-dir="R" aria-label="Walk right">&#9654;</button>
+    </div>
+    <div>
+      <div class="btnrow">
+        <button class="btn arm" id="armBtn" aria-pressed="false">SHED: OFF</button>
+        <button class="btn" id="undoBtn">UNDO</button>
+        <button class="btn" id="restartBtn">RESTART</button>
+      </div>
+      <p class="keys">
+        <kbd>&uarr;&darr;&larr;&rarr;</kbd> walk &nbsp; <kbd>shift</kbd>+dir shed &nbsp; <kbd>space</kbd> arm shed<br>
+        <kbd>Z</kbd> undo &nbsp; <kbd>R</kbd> restart &nbsp; walk into a husk to carry it
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="engine.js"></script>
+<script src="levels.js"></script>
+<script>
+(function(){
+  'use strict';
+  var E = window.MoltEngine, LEVELS = window.MoltLevels;
+  var PAR = [6,5,8,12];
+  var TILE = 16, HEAD = 2;
+
+  function surface(w,h){
+    var c=document.createElement('canvas'); c.width=w; c.height=h;
+    var x=c.getContext('2d'); x.imageSmoothingEnabled=false; return {c:c,x:x};
+  }
+  function P(x,a,b,col){ x.fillStyle=col; x.fillRect(a,b,1,1); }
+  function R(x,a,b,w,h,col){ x.fillStyle=col; x.fillRect(a,b,w,h); }
+  function hash(a,b){ var n=(a*73856093)^(b*19349663); n=(n^(n>>13))*1274126177; return ((n^(n>>16))>>>0)/4294967296; }
+
+  var C = {
+    floor:'#1e2c22', floorHi:'#27392c', floorLo:'#161f19', grit:'#324a37',
+    wall:'#131c15', wallTop:'#2c3d2c', wallLo:'#0a0f0b',
+    chasm:'#070a06', chasmRim:'#22301f',
+    spring:'#2f5c52', springHi:'#5fb0a8', springLo:'#1c3a33',
+    exit:'#16261a', exitGlow:'#8fbf6a',
+    plank:'#8a6033', plankHi:'#d99a4e', plankLo:'#4f3620',
+    springIcon:'#5fb0a8', springIconHi:'#bfe8e2',
+    wisp:'#e9dfc4', wispHi:'#fff8e6', wispLo:'#b39a68', eye:'#241c0c'
+  };
+
+  function paintFloor(x,gx,gy){
+    R(x,0,0,16,16,C.floor);
+    R(x,0,0,16,1,C.floorHi); R(x,0,15,16,1,C.floorLo);
+    for(var i=0;i<9;i++){
+      var h1=hash(gx*16+i,gy*7+i*3);
+      if(h1>0.55) P(x,(h1*16)|0,((hash(gy+i,gx-i)*13)|0)+1,h1>0.86?C.grit:C.floorLo);
+    }
+  }
+  function paintWall(x,gx,gy){
+    R(x,0,0,16,16,C.wall);
+    R(x,0,0,16,2,C.wallTop); R(x,0,14,16,2,C.wallLo);
+    for(var i=0;i<7;i++){
+      var h1=hash(gx*31+i,gy*17+i);
+      if(h1>0.5) R(x,(h1*13)|0,((hash(gx-i,gy+i)*9)|0)+4,2,1,C.wallLo);
+    }
+  }
+  function paintChasm(x){
+    R(x,0,0,16,16,C.chasm);
+    R(x,0,0,16,1,C.chasmRim); R(x,0,1,1,14,C.chasmRim); R(x,15,1,1,14,C.chasmRim);
+  }
+  function paintSpring(x,gx,gy,t){
+    paintFloor(x,gx,gy);
+    var s=Math.sin(t/260+gx+gy)*1.2;
+    for(var r=0;r<3;r++){
+      R(x,4,5+r*3+ (r===1?s:0),8,2,r%2?C.springLo:C.spring);
+    }
+    R(x,4,5,8,1,C.springHi);
+  }
+  function paintExit(x,gx,gy,t){
+    R(x,0,0,16,16,C.exit);
+    var pulse=0.55+0.45*Math.sin(t/600);
+    for(var i=0;i<5;i++){
+      x.globalAlpha=(1-i/5)*pulse*0.9;
+      R(x,5,11-i*2,6,2,C.exitGlow);
+    }
+    x.globalAlpha=1;
+  }
+  function spritePlank(x){
+    R(x,2,6,12,4,C.plankLo); R(x,2,5,12,4,C.plank); R(x,2,5,12,1,C.plankHi);
+    R(x,5,5,1,4,C.plankLo); R(x,9,5,1,4,C.plankLo);
+  }
+  function spriteSpring(x){
+    for(var r=0;r<4;r++){
+      R(x,3,4+r*2,10,1,C.springIcon);
+    }
+    R(x,3,4,10,1,C.springIconHi);
+    R(x,3,3,2,2,C.springIconHi); R(x,11,3,2,2,C.springIconHi);
+  }
+  var SPRITE={p:spritePlank,r:spriteSpring};
+
+  function spriteWisp(x,t,heavy){
+    var b=Math.sin(t/380)>0?0:1;
+    var size = heavy? 9 : 10;
+    var ox = heavy? 1 : 0;
+    x.globalAlpha=.16; R(x,3,3+b,10,10,C.wisp); x.globalAlpha=1;
+    R(x,5+ox,4+b,size-4,7,C.wispLo);
+    R(x,5+ox,4+b,size-4,6,C.wisp);
+    R(x,6+ox,4+b,size-6,4,C.wispHi);
+    P(x,6+ox,7+b,C.eye); P(x,9+ox,7+b,C.eye);
+  }
+
+  var lvIndex=0, st=null, history=[], moves=0, armed=false, won=false;
+  var canvas=document.getElementById('board'), ctx=canvas.getContext('2d');
+  var scale=3, terrainSurf=null, terrainDirty=true, tileBuf=surface(TILE,TILE);
+  function $(id){ return document.getElementById(id); }
+
+  var done={};
+  try{ done=JSON.parse(localStorage.getItem('molt.progress')||'{}')||{}; }catch(e){ done={}; }
+  function save(){ try{ localStorage.setItem('molt.progress',JSON.stringify(done)); }catch(e){} }
+
+  function roman(n){ return ['I','II','III','IV','V','VI'][n-1]||String(n); }
+
+  function load(i){
+    lvIndex=i; st=E.parse(LEVELS[i]); history=[]; moves=0; won=false;
+    setArm(false); terrainDirty=true;
+    $('won').classList.remove('show');
+    $('teach').innerHTML='<span class="lv">'+roman(i+1)+' &middot; '+LEVELS[i].name.toUpperCase()+'</span>'+LEVELS[i].teach;
+    setFlash('');
+    layout(); drawRibbon(); sync();
+  }
+
+  function layout(){
+    var avail=(canvas.parentNode&&canvas.parentNode.clientWidth)||320;
+    scale=Math.max(2,Math.min(5,Math.floor(avail/(st.w*TILE))));
+    canvas.width=st.w*TILE*scale;
+    canvas.height=(st.h+HEAD)*TILE*scale;
+    ctx.imageSmoothingEnabled=false;
+    terrainDirty=true;
+  }
+
+  function buildTerrain(t){
+    var s=surface(st.w*TILE,st.h*TILE), x=s.x;
+    for(var gy=0;gy<st.h;gy++) for(var gx=0;gx<st.w;gx++){
+      x.save(); x.translate(gx*TILE,gy*TILE);
+      var ch=st.terrain[gy][gx];
+      if(ch==='#') paintWall(x,gx,gy);
+      else if(ch==='X') paintChasm(x);
+      else if(ch==='E') paintExit(x,gx,gy,t);
+      else if(ch==='^') paintSpring(x,gx,gy,t);
+      else paintFloor(x,gx,gy);
+      x.restore();
+    }
+    terrainSurf=s.c; terrainDirty=false;
+  }
+
+  function draw(t){
+    if(!st) return;
+    /* springs and the exit animate, so rebuild every frame; cheap at this size */
+    buildTerrain(t);
+    var S=scale, oy=HEAD*TILE;
+    ctx.fillStyle='#0a100c'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(terrainSurf,0,oy*S,st.w*TILE*S,st.h*TILE*S);
+
+    for(var k in st.pickups){
+      var p=k.split(',');
+      tileBuf.x.clearRect(0,0,TILE,TILE); SPRITE[st.pickups[k]](tileBuf.x);
+      ctx.drawImage(tileBuf.c,(+p[0])*TILE*S,((+p[1])*TILE+oy)*S,TILE*S,TILE*S);
+    }
+
+    var bx=st.px*TILE*S, by=(st.py*TILE+oy)*S;
+    tileBuf.x.clearRect(0,0,TILE,TILE); spriteWisp(tileBuf.x,t,st.stack.length>1);
+    ctx.drawImage(tileBuf.c,bx,by,TILE*S,TILE*S);
+  }
+
+  function slotRow(ch){
+    var row=document.createElement('div'); row.className='slot';
+    var mini=surface(TILE,TILE); SPRITE[ch](mini.x);
+    row.appendChild(mini.c);
+    var nm=document.createElement('span'); nm.className='nm';
+    nm.textContent=E.HUSK[ch].name.toUpperCase();
+    row.appendChild(nm);
+    return row;
+  }
+
+  function sync(){
+    $('moves').textContent=moves;
+    $('held').textContent=st.stack.length;
+    $('cap').textContent=st.maxCarry;
+
+    var list=$('cairnlist'); list.innerHTML='';
+    $('cairnEmpty').style.display=st.stack.length?'none':'block';
+    for(var i=0;i<st.stack.length;i++) list.appendChild(slotRow(st.stack[i]));
+  }
+
+  function setFlash(msg,good){
+    var f=$('flash'); f.textContent=msg||''; f.className='flash'+(good?' good':'');
+  }
+
+  function drawRibbon(){
+    var r=$('ribbon'); r.innerHTML='';
+    LEVELS.forEach(function(lv,i){
+      var b=document.createElement('button');
+      b.textContent=roman(i+1);
+      b.title=lv.name;
+      if(done[i]!=null) b.className='done';
+      if(i===lvIndex) b.setAttribute('aria-current','true');
+      b.onclick=function(){ load(i); };
+      r.appendChild(b);
+    });
+  }
+
+  function act(action){
+    if(won) return;
+    var res=E.step(st,action);
+    if(!res.state){ setFlash(res.blocked||''); return; }
+    history.push(E.clone(st));
+    if(history.length>500) history.shift();
+    st=res.state; moves++; terrainDirty=true;
+    setFlash(res.note||'', !!res.note);
+    sync();
+    if(E.isWin(st)) finish();
+  }
+
+  function finish(){
+    won=true;
+    if(done[lvIndex]==null||moves<done[lvIndex]) done[lvIndex]=moves;
+    save(); drawRibbon();
+    var par=PAR[lvIndex];
+    $('wonSub').textContent = moves+' moves'+(par?' · best possible is '+par:'');
+    $('nextBtn').textContent = lvIndex<LEVELS.length-1 ? 'NEXT' : 'START AGAIN';
+    $('won').classList.add('show');
+    $('nextBtn').focus();
+  }
+
+  function undo(){
+    if(won||!history.length) return;
+    st=history.pop(); moves=Math.max(0,moves-1);
+    terrainDirty=true; setFlash(''); sync();
+  }
+
+  function setArm(v){
+    armed=v;
+    var b=$('armBtn');
+    b.setAttribute('aria-pressed',String(v));
+    b.textContent = v ? 'SHED: ARMED' : 'SHED: OFF';
+  }
+  function go(dir,shift){
+    var shedding = shift || armed;
+    act(shedding ? dir.toLowerCase() : dir);
+    if(armed) setArm(false);
+  }
+
+  var KEYMAP={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R',
+              w:'U',s:'D',a:'L',d:'R',W:'U',S:'D',A:'L',D:'R'};
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    if(e.key===' '){ e.preventDefault(); setArm(!armed); return; }
+    if(e.key==='z'||e.key==='Z'){ e.preventDefault(); undo(); return; }
+    if(e.key==='r'||e.key==='R'){ e.preventDefault(); load(lvIndex); return; }
+    if(e.key==='Enter'&&won){ e.preventDefault(); $('nextBtn').click(); return; }
+    var dir=KEYMAP[e.key];
+    if(!dir) return;
+    e.preventDefault();
+    go(dir,e.shiftKey);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.pad button'),function(b){
+    b.addEventListener('click',function(){ go(b.getAttribute('data-dir'),false); });
+  });
+  $('armBtn').onclick=function(){ setArm(!armed); };
+  $('undoBtn').onclick=undo;
+  $('restartBtn').onclick=function(){ load(lvIndex); };
+  $('nextBtn').onclick=function(){ load(lvIndex<LEVELS.length-1?lvIndex+1:0); };
+  window.addEventListener('resize',function(){ if(st) layout(); });
+
+  function start(resume){
+    var i=(resume&&typeof resume.level==='number')?resume.level:0;
+    load(Math.max(0,Math.min(LEVELS.length-1,i)));
+    (function loop(t){ draw(t||0); requestAnimationFrame(loop); })(0);
+  }
+  if(window.claude&&window.claude.hot){
+    window.claude.hot.snapshot(function(){ return {level:lvIndex}; });
+    if(window.claude.hot.ready) window.claude.hot.ready(start);
+    else start(window.claude.hot.data||{});
+  } else {
+    start({});
+  }
+})();
+</script>
