@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — fletcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <a class="wordmark" href="index.html">fletcher</a>
+      <ul class="nav-links">
+        <li><a href="index.html">About</a></li>
+        <li><a href="blog.html" aria-current="page">Blog</a></li>
+        <li><a href="games.html">Games</a></li>
+        <li><a href="portfolio.html">Portfolio</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero container">
+    <h1>Blog</h1>
+    <p>[Notes on projects, things you're learning, occasional long-form posts. Add one post-card per entry below.]</p>
+  </header>
+
+  <section class="section container">
+    <div class="post-grid">
+      <article class="post-card">
+        <div class="thumb blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18M9 21V9"/>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="badge blue">Blog</span>
+          <h3>[Post title goes here]</h3>
+          <p>[Short excerpt or dek, one to two lines.]</p>
+        </div>
+      </article>
+
+      <article class="post-card">
+        <div class="thumb blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18M9 21V9"/>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="badge blue">Blog</span>
+          <h3>[Post title goes here]</h3>
+          <p>[Short excerpt or dek, one to two lines.]</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">&copy; <span id="year"></span> Fletcher</div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
