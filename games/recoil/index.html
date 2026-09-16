@@ -1,4 +1,5 @@
 <title>Recoil</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jacquard+12&family=Silkscreen:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300;1,6..72,300&display=swap">
 <style>
@@ -88,6 +89,15 @@
 
   :focus-visible{outline:2px solid var(--ember); outline-offset:2px}
   @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+  @media (max-width:480px){
+    body{padding-left:6px; padding-right:6px; padding-block:14px 24px}
+    .wrap{gap:10px}
+  }
+  /* A touchscreen gets swipe-to-push instead — the d-pad is for mouse/keyboard use */
+  @media (pointer:coarse){
+    .pad{display:none}
+  }
+  canvas{touch-action:none}
 </style>
 
 <a href="../../games.html" style="position:fixed;top:8px;left:8px;z-index:50;font-family:'Silkscreen',monospace;font-size:10px;letter-spacing:.08em;color:#ccc;text-decoration:none;border:1px solid rgba(255,255,255,.18);padding:4px 8px;background:rgba(0,0,0,.55)">&larr; GAMES</a>
@@ -134,7 +144,7 @@
         <button class="btn" id="restartBtn">RESTART</button>
       </div>
       <p class="keys">
-        <kbd>&uarr;&darr;&larr;&rarr;</kbd> walk / push &nbsp;
+        <kbd>&uarr;&darr;&larr;&rarr;</kbd> / swipe to walk or push &nbsp;
         <kbd>Z</kbd> undo &nbsp; <kbd>R</kbd> restart
       </p>
     </div>
@@ -331,6 +341,23 @@
   Array.prototype.forEach.call(document.querySelectorAll('.pad button'),function(b){
     b.addEventListener('click',function(){ act(b.getAttribute('data-dir')); });
   });
+
+  /* Swipe-to-push: a drag on the board itself, no d-pad required. */
+  (function(){
+    var sx=0, sy=0, tracking=false, MIN=24;
+    canvas.addEventListener('touchstart',function(e){
+      if(e.touches.length!==1) return;
+      tracking=true; sx=e.touches[0].clientX; sy=e.touches[0].clientY;
+    },{passive:true});
+    canvas.addEventListener('touchend',function(e){
+      if(!tracking) return; tracking=false;
+      var t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+      if(Math.max(Math.abs(dx),Math.abs(dy))<MIN) return;
+      var dir = Math.abs(dx)>Math.abs(dy) ? (dx>0?'R':'L') : (dy>0?'D':'U');
+      act(dir);
+    },{passive:true});
+  })();
+
   $('undoBtn').onclick=undo;
   $('restartBtn').onclick=function(){ load(lvIndex); };
   $('nextBtn').onclick=function(){ load(lvIndex<LEVELS.length-1?lvIndex+1:0); };
