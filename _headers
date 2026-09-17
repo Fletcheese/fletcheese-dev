@@ -1,5 +1,2 @@
 /*
-  Cache-Control: public, max-age=3600, must-revalidate
-
-/styles.css
-  Cache-Control: public, max-age=604800, must-revalidate
+  Cache-Control: no-cache

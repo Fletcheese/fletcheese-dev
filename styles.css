@@ -38,6 +38,12 @@ a {
   padding: 0 1.5rem;
 }
 
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1.75rem;
+  }
+}
+
 /* Nav */
 .nav {
   border-bottom: 1px solid var(--slate);
