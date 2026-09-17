@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building this site with Claude — fletcher</title>
+  <meta name="description" content="How this site got built in under an hour, and what it says about where AI is headed.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <a class="wordmark" href="../index.html">fletcher</a>
+      <ul class="nav-links">
+        <li><a href="../index.html">About</a></li>
+        <li><a href="../blog.html" aria-current="page">Blog</a></li>
+        <li><a href="../games.html">Games</a></li>
+        <li><a href="../portfolio.html">Portfolio</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero container">
+    <p class="eyebrow">September 16, 2026</p>
+    <h1>Building this site with Claude</h1>
+  </header>
+
+  <section class="section container">
+    <article class="article">
+      <p>This site was built with Claude. I asked for a recommendation on how to acquire a domain and host the site which led me to Cloudflare. Could I have figured that out on my own? Sure, but this made it easier. I asked for help generating site assets based on a rough description of what I wanted to do which directly led to what you see here. It walked me through what permissions to grant an API token so that it could automatically deploy updates when I ask. I did all of this in the span of about an hour laying in bed on my phone.</p>
+
+      <p>It is often said that the internet is the democratization of ideas or something like that. If you want to learn something then you can find a good guide on the internet. AI takes that to a new level. If you ask the right questions and in some cases have a little bit of technical background to push back (these cases are becoming less and less common), then you can do it. I have 10 years of software consulting experience including various custom development, especially integration/API work. I am now confidently asking Claude to write me code that requires very little review and is finished successfully with better guardrails than I would have thought of in substantially less time. A project that might have taken me a day can often finish in less than 30 minutes unattended.</p>
+
+      <p>This is insane. Six months ago I wouldn't have believed it calling it magic. Now it's part of what I do every day.</p>
+
+      <p>People are concerned about where this will lead. That's fair. I don't know. I don't think anyone truly does, and it could be bad. But I am an optimistic technologist. I don't think any of the problems AI poses are insurmountable and the superpowers it gives us today will continue democratizing technology. People can build things now that they never would have been able to do before. Information can be shared more effectively and broadly. Learning something new is easier than ever. And frankly, for IT workers, if you don't get on the bus, you will be at risk of losing your job soon. This is a tumultuous time, but there is no question in my mind that AI growth is not stopping. It is a natural evolution of general computer usage.</p>
+
+      <p>For now it takes careful context curation to actually see the benefits, but that will only get easier. More to come.</p>
+    </article>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">&copy; <span id="year"></span> Fletcher</div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
